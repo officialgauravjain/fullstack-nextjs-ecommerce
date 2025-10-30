@@ -44,16 +44,18 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  reviews       Review[]
 
   @@map("users")
 }
 
 model Product {
-  id          String @id
+  id          String   @id
   description String
   name        String
   price       Int
   image       String
+  reviews     Review[]
 }
 
 model Session {
@@ -73,4 +75,18 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  userId    String
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId])
 }

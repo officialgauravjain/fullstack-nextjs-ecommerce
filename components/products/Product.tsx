@@ -1,11 +1,14 @@
 import type Prisma from '@prisma/client';
+import { useSession } from 'next-auth/react';
 import { useBuyProduct } from './hooks/useBuyProduct';
 import { useCart } from '../cart/hooks/useCart';
+import RateProduct from './RateProduct';
 
 type ProductProps = Readonly<Prisma.Product>;
 
 export const Product = (product: ProductProps) => {
   const { id, image, name, price } = product;
+  const { data: session } = useSession();
   const { mutate } = useBuyProduct();
   const { dispatch } = useCart();
 
@@ -44,6 +47,11 @@ export const Product = (product: ProductProps) => {
       >
         Dodaj do koszyka
       </button>
+      {session && (
+        <div className="mt-4">
+          <RateProduct productId={id} />
+        </div>
+      )}
     </article>
   );
 };
